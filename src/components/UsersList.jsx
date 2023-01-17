@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import UsersForm from './UsersForm';
-import './UsersList.css';
 
 const UsersList = () => {
     const [users, setUsers] = useState([]);
@@ -25,10 +24,6 @@ const UsersList = () => {
         });
     }, []);
   
-    function createUser() {
-        setEditingUser({});
-    }
-
     return (
         <div>
           {errors && <div>{errors}</div>}
@@ -36,37 +31,38 @@ const UsersList = () => {
           {editingUser ? (
             <UsersForm user={editingUser} onSave={saveUser} onCancel={cancelEdition}/>
           ) : (
-            <div>
-            <button className="createuser" onClick={createUser}>Create User</button>
-            <table>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Last Name</th>
-                  <th>Email</th>
-                  <th>Birthday</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.map(user => (
-                  <tr key={user.id}>
-                    <td>{user.first_name}</td>
-                    <td>{user.last_name}</td>
-                    <td>{user.email}</td>
-                    <td>{user.birthday}</td>
-                  <td>
-                    <button onClick={() => deleteUser(user.id)}>Delete</button>
-                    <button onClick={() => editUser(user)}>Edit</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          </div>
-        )}
-      </div>
-    );
+            users.length > 0 ? (
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Birthday</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map(user => (
+                    <tr key={user.id}>
+                      <td>{user.first_name}</td>
+                      <td>{user.last_name}</td>
+                      <td>{user.email}</td>
+                      <td>{user.birthday}</td>
+                      <td>
+                        <button onClick={() => deleteUser(user.id)}>Delete</button>
+                        <button onClick={() => editUser(user)}>Edit</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <UsersForm onSave={saveUser} onCancel={cancelEdition} />
+            )
+          )}
+        </div>
+      );      
 
     function deleteUser(id) {
         axios.delete(`https://users-crud.academlo.tech/users/${id}`)
