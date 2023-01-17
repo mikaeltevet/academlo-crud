@@ -1,0 +1,58 @@
+body {
+    background: white;
+    color: #111;
+}
+
+.icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background-color: white;
+    margin-right: 10px;
+  }
+  
+.form-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+  
+.form-control {
+    flex: 1;
+}
+
+h2 {
+    font-size: 2rem;
+    color: #111;
+    font-weight: 600;
+    text-align: left;
+}
+
+input {
+    background: #eee;
+    padding: 0.75rem;
+    border-radius: 12px;
+    border: 0;
+    color: #111;
+    width: 100%;
+    margin-right: 0.5rem;
+}
+
+input::placeholder {
+    color: #111;
+}
+
+input.date {
+    background-image: url(../assets/calendar-regular.svg);
+    background-repeat: no-repeat;
+    background-size: 1rem;
+    background-position-x: 96%;
+    background-position-y: center;
+}
+
+button {
+    width: 100%;
+    background-color: cadetblue;
+}
