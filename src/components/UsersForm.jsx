@@ -5,35 +5,34 @@ import { faUser, faEnvelope, faLock, faCake } from '@fortawesome/free-solid-svg-
 import './UsersForm.css';
 
 const UsersForm = ({ user, onSave, onCancel }) => {
-  const [email, setEmail] = useState(user ? user.email : '');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [firstName, setFirstName] = useState(user ? user.first_name : '');
-  const [lastName, setLastName] = useState(user ? user.last_name : '');
-  const [birthday, setBirthday] = useState(user ? user.birthday : '');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [birthday, setBirthday] = useState('');
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const userData = {
+    const user = {
       email,
       password,
       first_name: firstName,
       last_name: lastName,
       birthday
     };
-    if(user){
-        await axios.put(`https://users-crud.academlo.tech/users/${user.id}`, userData)
+    let userExist = await axios.get(`https://users-crud.academlo.tech/users?email=${user.email}`);
+    if(userExist.data.length){
+        await axios.put(`https://users-crud.academlo.tech/users/${userExist.data[0].id}`, user)
         .then(response => {
             console.log(response.data);
-            onSave(response.data);
         })
         .catch(error => {
             console.log(error);
         });
     }else{
-        axios.post('https://users-crud.academlo.tech/users/', userData)
+        axios.post('https://users-crud.academlo.tech/users/', user)
         .then(response => {
             console.log(response.data);
-            onSave(response.data);
         })
         .catch(error => {
             console.log(error);
