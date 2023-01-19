@@ -9,11 +9,11 @@ const SuccessMessage = styled.div`
         margin-bottom: 16px;
     `;
 
-    const ErrorMessage = styled.div`
-        color: red;
-        font-size: 18px;
-        margin-bottom: 16px;
-    `;
+const ErrorMessage = styled.div`
+    color: red;
+    font-size: 18px;
+    margin-bottom: 16px;
+`;
 
 const UsersList = () => {
     const [users, setUsers] = useState([]);
