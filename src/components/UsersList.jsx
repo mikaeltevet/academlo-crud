@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import UsersForm from './UsersForm';
 import { SuccessMessage, ErrorMessage } from './messages';
+import styled from 'styled-components';
 
 const UsersList = () => {
     const [users, setUsers] = useState([]);
@@ -11,27 +12,26 @@ const UsersList = () => {
     const [success, setSuccess] = useState(false);
   
     useEffect(() => {
-      setLoading(true);
-      const token = localStorage.getItem("token");
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      axios
-        .get('https://users-crud.academlo.tech/users/')
-        .then(response => {
-          setUsers(response.data);
-          setLoading(false);
-        })
-        .catch(error => {
-          setErrors(error.message);
-          setLoading(false);
-        });
-    },
-    
-    useEffect(() => {
-        if(success) {
-            setTimeout(() => setSuccess(false), 2000);
-        }
-    }, [success])
-    , []);
+        setLoading(true);
+        const token = localStorage.getItem("token");
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        axios
+          .get('https://users-crud.academlo.tech/users/')
+          .then(response => {
+            setUsers(response.data);
+            setLoading(false);
+          })
+          .catch(error => {
+            setErrors(error.message);
+            setLoading(false);
+          });
+      }, []);
+      
+      useEffect(() => {
+          if(success) {
+              setTimeout(() => setSuccess(false), 2000);
+          }
+      }, [success])      
   
     return (
         <div>
