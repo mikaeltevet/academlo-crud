@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import UsersForm from './UsersForm';
-import { SuccessMessage, ErrorMessage } from '../styles/messages';
+import { SuccessMessage, ErrorMessage } from './messages';
 
 const UsersList = () => {
     const [users, setUsers] = useState([]);
