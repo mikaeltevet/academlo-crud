@@ -28,7 +28,6 @@ const UsersList = () => {
   
     return (
         <div>
-            <div>
           {errors && <ErrorMessage>{errors}</ErrorMessage>}
           {loading && <div>Loading...</div>}
           {success && <SuccessMessage>User was created successfully</SuccessMessage>}
