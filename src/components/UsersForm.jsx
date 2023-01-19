@@ -10,9 +10,11 @@ const UsersForm = ({ user, onSave, onCancel }) => {
   const [firstName, setFirstName] = useState(user ? user.first_name : '');
   const [lastName, setLastName] = useState(user ? user.last_name : '');
   const [birthday, setBirthday] = useState(user ? user.birthday : '');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    setIsSubmitting(true);
     const userData = {
       email,
       password,
@@ -38,6 +40,7 @@ const UsersForm = ({ user, onSave, onCancel }) => {
             console.log(error);
         });
     }
+    setIsSubmitting(false);
   };
 
   return (
@@ -59,7 +62,7 @@ const UsersForm = ({ user, onSave, onCancel }) => {
       </div>
       <div className="form-group">
         <div className="icon-container">
-<FontAwesomeIcon icon={faLock} />
+          <FontAwesomeIcon icon={faLock} />
         </div>
         <input type="password" placeholder="Password" className="form-control" value={password} onChange={event => setPassword(event.target.value)}/>
       </div>
@@ -70,12 +73,12 @@ const UsersForm = ({ user, onSave, onCancel }) => {
         <input type="date" placeholder="Birthday" className="form-control" value={birthday} onChange={event => setBirthday(event.target.value)}/>
       </div>
       <div className="form-group">
-        <button type="submit" className="form-control">Save</button>
+        <button type="submit" className={`form-control ${isSubmitting ? 'submitting' : ''}`}>Save</button>
         <button type="button" className="form-control" onClick={onCancel}>Cancel</button>
       </div>
     </form>
     </div>
-    )
+  );
 };
 
 export default UsersForm;
