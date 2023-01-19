@@ -3,6 +3,7 @@ import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faEnvelope, faLock, faCake } from '@fortawesome/free-solid-svg-icons'
 import './UsersForm.css';
+import LoadingButton from 'react-loading-button';
 
 const UsersForm = ({ user, onSave, onCancel }) => {
   const [email, setEmail] = useState(user ? user.email : '');
@@ -73,7 +74,14 @@ const UsersForm = ({ user, onSave, onCancel }) => {
         <input type="date" placeholder="Birthday" className="form-control" value={birthday} onChange={event => setBirthday(event.target.value)}/>
       </div>
       <div className="form-group">
-        <button type="submit" className={`form-control ${isSubmitting ? 'submitting' : ''}`}>Save</button>
+        <LoadingButton
+            type="submit"
+            className="form-control"
+            loading={isSubmitting}
+            onClick={handleSubmit}
+        >
+            Save
+        </LoadingButton>
         <button type="button" className="form-control" onClick={onCancel}>Cancel</button>
       </div>
     </form>
