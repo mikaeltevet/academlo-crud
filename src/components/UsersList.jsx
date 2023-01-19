@@ -7,6 +7,7 @@ const UsersList = () => {
     const [editingUser, setEditingUser] = useState(null);
     const [errors, setErrors] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [success, setSuccess] = useState(false);
   
     useEffect(() => {
       setLoading(true);
@@ -28,6 +29,7 @@ const UsersList = () => {
         <div>
           {errors && <div>{errors}</div>}
           {loading && <div>Loading...</div>}
+          {success && <div>User was created successfully</div>}
           {editingUser ? (
             <UsersForm user={editingUser} onSave={saveUser} onCancel={cancelEdition}/>
           ) : (
@@ -72,13 +74,13 @@ const UsersList = () => {
         }).catch(error => {
             setErrors(error.message);
         });
-      }
+    }
     
-      function editUser(user) {
+    function editUser(user) {
         setEditingUser(user);
-      }
-    
-      function saveUser(user) {
+    }
+
+    function saveUser(user) {
         if(user.id) {
           axios.put(`https://users-crud.academlo.tech/users/${user.id}/`, user)
           .then(()=>{
@@ -92,20 +94,23 @@ const UsersList = () => {
           }).catch(error => {
             setErrors(error.message);
           });
-      } else {
-        axios.post(`https://users-crud.academlo.tech/users/`, user)
+        } else {
+          axios.post(`https://users-crud.academlo.tech/users/`, user)
           .then(response => {
             setUsers([...users, response.data]);
+            setSuccess(true);
             setEditingUser(null);
+            //Reset success state after a few seconds
+            setTimeout(() => setSuccess(false), 2000);
           }).catch(error => {
             setErrors(error.message);
           });
-      }
+        }
     }
     
     function cancelEdition(){
-      setEditingUser(null);
+        setEditingUser(null);
     }
 };
 
-export default UsersList;    
+export default UsersList;
