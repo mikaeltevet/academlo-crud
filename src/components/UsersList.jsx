@@ -24,7 +24,14 @@ const UsersList = () => {
           setErrors(error.message);
           setLoading(false);
         });
-    }, []);
+    },
+    
+    useEffect(() => {
+        if(success) {
+            setTimeout(() => setSuccess(false), 2000);
+        }
+    }, [success])
+    , []);
   
     return (
         <div>
