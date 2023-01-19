@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import UsersForm from './UsersForm';
+import { SuccessMessage, ErrorMessage } from '../styles/messages';
 
 const UsersList = () => {
     const [users, setUsers] = useState([]);
@@ -27,9 +28,10 @@ const UsersList = () => {
   
     return (
         <div>
-          {errors && <div>{errors}</div>}
+            <div>
+          {errors && <ErrorMessage>{errors}</ErrorMessage>}
           {loading && <div>Loading...</div>}
-          {success && <div>User was created successfully</div>}
+          {success && <SuccessMessage>User was created successfully</SuccessMessage>}
           {editingUser ? (
             <UsersForm user={editingUser} onSave={saveUser} onCancel={cancelEdition}/>
           ) : (
