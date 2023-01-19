@@ -3,14 +3,7 @@ import axios from 'axios';
 import UsersForm from './UsersForm';
 import styled from 'styled-components';
 
-const UsersList = () => {
-    const [users, setUsers] = useState([]);
-    const [editingUser, setEditingUser] = useState(null);
-    const [errors, setErrors] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [success, setSuccess] = useState(false);
-
-    const SuccessMessage = styled.div`
+const SuccessMessage = styled.div`
         color: green;
         font-size: 18px;
         margin-bottom: 16px;
@@ -21,6 +14,13 @@ const UsersList = () => {
         font-size: 18px;
         margin-bottom: 16px;
     `;
+
+const UsersList = () => {
+    const [users, setUsers] = useState([]);
+    const [editingUser, setEditingUser] = useState(null);
+    const [errors, setErrors] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [success, setSuccess] = useState(false);
   
     useEffect(() => {
         setLoading(true);
