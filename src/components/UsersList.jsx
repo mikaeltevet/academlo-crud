@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import UsersForm from './UsersForm';
-import { SuccessMessage, ErrorMessage } from './messages';
 import styled from 'styled-components';
 
 const UsersList = () => {
@@ -10,6 +9,18 @@ const UsersList = () => {
     const [errors, setErrors] = useState(null);
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
+
+    const SuccessMessage = styled.div`
+        color: green;
+        font-size: 18px;
+        margin-bottom: 16px;
+    `;
+
+    const ErrorMessage = styled.div`
+        color: red;
+        font-size: 18px;
+        margin-bottom: 16px;
+    `;
   
     useEffect(() => {
         setLoading(true);
@@ -108,8 +119,6 @@ const UsersList = () => {
             setUsers([...users, response.data]);
             setSuccess(true);
             setEditingUser(null);
-            //Reset success state after a few seconds
-            setTimeout(() => setSuccess(false), 2000);
           }).catch(error => {
             setErrors(error.message);
           });
