@@ -13,7 +13,7 @@ const UsersList = () => {
       const token = localStorage.getItem("token");
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       axios
-        .get('https://users-crud.academlo.tech/users')
+        .get('https://users-crud.academlo.tech/users/')
         .then(response => {
           setUsers(response.data);
           setLoading(false);
@@ -65,7 +65,7 @@ const UsersList = () => {
       );      
 
     function deleteUser(id) {
-        axios.delete(`https://users-crud.academlo.tech/users/${id}`)
+        axios.delete(`https://users-crud.academlo.tech/users/${id}/`)
         .then(()=>{
             //update the state to remove the user from the list
             setUsers(users.filter(user => user.id !== id))
@@ -80,7 +80,7 @@ const UsersList = () => {
     
       function saveUser(user) {
         if(user.id) {
-          axios.put(`https://users-crud.academlo.tech/users/${user.id}`, user)
+          axios.put(`https://users-crud.academlo.tech/users/${user.id}/`, user)
           .then(()=>{
             setUsers(users.map(u => {
               if (u.id === user.id) {
@@ -93,7 +93,7 @@ const UsersList = () => {
             setErrors(error.message);
           });
       } else {
-        axios.post(`https://users-crud.academlo.tech/users`, user)
+        axios.post(`https://users-crud.academlo.tech/users/`, user)
           .then(response => {
             setUsers([...users, response.data]);
             setEditingUser(null);

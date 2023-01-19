@@ -20,9 +20,9 @@ const UsersForm = ({ user, onSave, onCancel }) => {
       last_name: lastName,
       birthday
     };
-    let userExist = await axios.get(`https://users-crud.academlo.tech/users?email=${user.email}`);
+    let userExist = await axios.get(`https://users-crud.academlo.tech/users?email=${user.email}/`);
     if(userExist.data.length){
-        await axios.put(`https://users-crud.academlo.tech/users/${userExist.data[0].id}`, user)
+        await axios.put(`https://users-crud.academlo.tech/users/${userExist.data[0].id}/`, user)
         .then(response => {
             console.log(response.data);
         })
