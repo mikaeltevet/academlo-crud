@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import UsersForm from './UsersForm';
 import styled from 'styled-components';
+import './UsersList.css';
 
 const SuccessMessage = styled.div`
-        color: green;
-        font-size: 18px;
-        margin-bottom: 16px;
-    `;
+    color: green;
+    font-size: 18px;
+    margin-bottom: 16px;
+`;
 
 const ErrorMessage = styled.div`
     color: red;
@@ -28,7 +29,7 @@ const UsersList = ({ users, onEdit, onDelete }) => {
             const token = localStorage.getItem("token");
             axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
             try {
-                const response = await axios.get('https://users-crud.academlo.tech/users');
+                const response = await axios.get('https://users-crud.academlo.tech/users/');
                 setUsers(response.data);
                 setLoading(false);
             } catch (error) {
@@ -52,7 +53,7 @@ const UsersList = ({ users, onEdit, onDelete }) => {
 
     const handleDelete = async (userId) => {
         try {
-            await axios.delete(`https://users-crud.academlo.tech/users/${userId}`);
+            await axios.delete(`https://users-crud.academlo.tech/users/${userId}/`);
             setUsers(users.filter(user => user.id !== userId));
             setSuccess(true);
         } catch (error) {
@@ -63,7 +64,7 @@ const UsersList = ({ users, onEdit, onDelete }) => {
     const saveUser = async (userData) => {
         if (isEditing) {
             try {
-                await axios.put(`https://users-crud.academlo.tech/users/${userData.id}`, userData);
+                await axios.put(`https://users-crud.academlo.tech/users/${userData.id}/`, userData);
                 setUsers(users.map(user => (user.id === userData.id ? userData : user)));
                 setIsEditing(false);
                 setSuccess(true);
@@ -75,7 +76,7 @@ const UsersList = ({ users, onEdit, onDelete }) => {
                 await axios.post('https://users-crud.academlo.tech/users/', userData);
                 setUsers([...users, userData]);
                 setSuccess(true);
-    } catch (error) {
+            } catch (error) {
                 setErrors(error.message);
             }
         }
@@ -100,14 +101,16 @@ const UsersList = ({ users, onEdit, onDelete }) => {
                             <tr>
                                 <th>Name</th>
                                 <th>Email</th>
+                                <th>Birthdate</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {users.map(user => (
                                 <tr key={user.id}>
-                                    <td>{user.name}</td>
+                                    <td>{user.first_name} {user.last_name}</td>
                                     <td>{user.email}</td>
+                                    <td>{user.birthday}</td>
                                     <td>
                                         <button onClick={() => handleEdit(user.id)}>Edit</button>
                                         <button onClick={() => handleDelete(user.id)}>Delete</button>
@@ -116,9 +119,10 @@ const UsersList = ({ users, onEdit, onDelete }) => {
                             ))}
                         </tbody>
                     </table>
-                    : <div>No users found.</div>
+                    : <div>No users found</div>
             )}
         </div>
-    );
+    )
 }
+
 export default UsersList;
