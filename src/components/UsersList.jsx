@@ -15,119 +15,110 @@ const ErrorMessage = styled.div`
     margin-bottom: 16px;
 `;
 
-const UsersList = () => {
-    const [users, setUsers] = useState([]);
+const UsersList = ({ users, onEdit, onDelete }) => {
     const [editingUser, setEditingUser] = useState(null);
+    const [isEditing, setIsEditing] = useState(false);
     const [errors, setErrors] = useState(null);
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
-  
+
     useEffect(() => {
-        setLoading(true);
-        const token = localStorage.getItem("token");
-        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-        axios
-          .get('https://users-crud.academlo.tech/users/')
-          .then(response => {
-            setUsers(response.data);
-            setLoading(false);
-          })
-          .catch(error => {
-            setErrors(error.message);
-            setLoading(false);
-          });
-      }, []);
-      
-      useEffect(() => {
-          if(success) {
-              setTimeout(() => setSuccess(false), 2000);
-          }
-      }, [success])      
-  
-    return (
-        <div>
-          {errors && <ErrorMessage>{errors}</ErrorMessage>}
-          {loading && <div>Loading...</div>}
-          {success && <SuccessMessage>User was created successfully</SuccessMessage>}
-          {editingUser ? (
-            <UsersForm user={editingUser} onSave={saveUser} onCancel={cancelEdition}/>
-          ) : (
-            users.length > 0 ? (
-              <table>
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Last Name</th>
-                    <th>Email</th>
-                    <th>Birthday</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {users.map(user => (
-                    <tr key={user.id}>
-                      <td>{user.first_name}</td>
-                      <td>{user.last_name}</td>
-                      <td>{user.email}</td>
-                      <td>{user.birthday}</td>
-                      <td>
-                        <button onClick={() => deleteUser(user.id)}>Delete</button>
-                        <button onClick={() => editUser(user)}>Edit</button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : (
-              <UsersForm onSave={saveUser} onCancel={cancelEdition} />
-            )
-          )}
-        </div>
-      );      
+        const fetchUsers = async () => {
+            setLoading(true);
+            const token = localStorage.getItem("token");
+            axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+            try {
+                const response = await axios.get('https://users-crud.academlo.tech/users');
+                setUsers(response.data);
+                setLoading(false);
+            } catch (error) {
+                setErrors(error.message);
+                setLoading(false);
+            }
+        }
+        fetchUsers();
+    }, []);
 
-    function deleteUser(id) {
-        axios.delete(`https://users-crud.academlo.tech/users/${id}/`)
-        .then(()=>{
-            //update the state to remove the user from the list
-            setUsers(users.filter(user => user.id !== id))
-        }).catch(error => {
-            setErrors(error.message);
-        });
-    }
-    
-    function editUser(user) {
-        setEditingUser(user);
+    useEffect(() => {
+        if(success) {
+            setTimeout(() => setSuccess(false), 2000);
+        }
+    }, [success])      
+
+    const handleEdit = (userId) => {
+        setEditingUser(users.find(user => user.id === userId));
+        setIsEditing(true);
     }
 
-    function saveUser(user) {
-        if(user.id) {
-          axios.put(`https://users-crud.academlo.tech/users/${user.id}/`, user)
-          .then(()=>{
-            setUsers(users.map(u => {
-              if (u.id === user.id) {
-                return user;
-              }
-              return u;
-            }));
-            setEditingUser(null);
-          }).catch(error => {
-            setErrors(error.message);
-          });
-        } else {
-          axios.post(`https://users-crud.academlo.tech/users/`, user)
-          .then(response => {
-            setUsers([...users, response.data]);
+    const handleDelete = async (userId) => {
+        try {
+            await axios.delete(`https://users-crud.academlo.tech/users/${userId}`);
+            setUsers(users.filter(user => user.id !== userId));
             setSuccess(true);
-            setEditingUser(null);
-          }).catch(error => {
+        } catch (error) {
             setErrors(error.message);
-          });
         }
     }
-    
-    function cancelEdition(){
+
+    const saveUser = async (userData) => {
+        if (isEditing) {
+            try {
+                await axios.put(`https://users-crud.academlo.tech/users/${userData.id}`, userData);
+                setUsers(users.map(user => (user.id === userData.id ? userData : user)));
+                setIsEditing(false);
+                setSuccess(true);
+            } catch (error) {
+                setErrors(error.message);
+            }
+        } else {
+            try {
+                await axios.post('https://users-crud.academlo.tech/users/', userData);
+                setUsers([...users, userData]);
+                setSuccess(true);
+    } catch (error) {
+                setErrors(error.message);
+            }
+        }
+    }
+
+    const cancelEdition = () => {
+        setIsEditing(false);
         setEditingUser(null);
     }
-};
 
+    return (
+        <div>
+            {errors && <ErrorMessage>{errors}</ErrorMessage>}
+            {loading && <div>Loading...</div>}
+            {success && <SuccessMessage>User was created/edited successfully</SuccessMessage>}
+            {editingUser ? (
+                <UsersForm user={editingUser} isEditing={isEditing} onSave={saveUser} onCancel={cancelEdition}/>
+            ) : (
+                users.length > 0 ?
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {users.map(user => (
+                                <tr key={user.id}>
+                                    <td>{user.name}</td>
+                                    <td>{user.email}</td>
+                                    <td>
+                                        <button onClick={() => handleEdit(user.id)}>Edit</button>
+                                        <button onClick={() => handleDelete(user.id)}>Delete</button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    : <div>No users found.</div>
+            )}
+        </div>
+    );
+}
 export default UsersList;
