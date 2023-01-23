@@ -58,10 +58,10 @@ const App = () => {
   return (
       <div>
           { selectedUser ? 
-              <UsersForm user={selectedUser} onSave={handleEdit} onCancel={handleCancel} />
+              <UsersForm user={selectedUser} onSave={handleEdit} onCancel={handleCancel} users={users} setUsers={setUsers} />
               :
               <div>
-                  {users.length > 0 ? <UsersList users={users} onEdit={setSelectedUser} onDelete={handleDelete} onSave={handleSave} /> : <UsersForm onSave={handleSave} />}
+                  {users.length > 0 ? <UsersList users={users} onEdit={setSelectedUser} onDelete={handleDelete} onSave={handleSave} setUsers={setUsers} /> : <UsersForm onSave={handleSave} users={users} setUsers={setUsers} />}
               </div>
           }
       </div>

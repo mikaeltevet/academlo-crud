@@ -3,6 +3,7 @@ import axios from 'axios';
 import UsersForm from './UsersForm';
 import styled from 'styled-components';
 import './UsersList.css';
+import PropTypes from 'prop-types';
 
 const SuccessMessage = styled.div`
     color: green;
@@ -16,25 +17,21 @@ const ErrorMessage = styled.div`
     margin-bottom: 16px;
 `;
 
-const UsersList = ({ users, onEdit, onDelete }) => {
+const UsersList = ({ users: usersFromProps, setUsers }) => {
     const [editingUser, setEditingUser] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [errors, setErrors] = useState(null);
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
         const fetchUsers = async () => {
-            setLoading(true);
-            const token = localStorage.getItem("token");
-            axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
             try {
                 const response = await axios.get('https://users-crud.academlo.tech/users/');
                 setUsers(response.data);
-                setLoading(false);
             } catch (error) {
                 setErrors(error.message);
-                setLoading(false);
             }
         }
         fetchUsers();
@@ -44,85 +41,83 @@ const UsersList = ({ users, onEdit, onDelete }) => {
         if(success) {
             setTimeout(() => setSuccess(false), 2000);
         }
-    }, [success])      
+    }, [success])
 
     const handleEdit = (userId) => {
-        setEditingUser(users.find(user => user.id === userId));
+        setEditingUser(usersFromProps.find(user => user.id === userId));
         setIsEditing(true);
     }
 
     const handleDelete = async (userId) => {
+        setIsDeleting(true);
         try {
             await axios.delete(`https://users-crud.academlo.tech/users/${userId}/`);
-            setUsers(users.filter(user => user.id !== userId));
+            setUsers(usersFromProps ? usersFromProps.filter(user => user.id !== userId) : []);
             setSuccess(true);
         } catch (error) {
             setErrors(error.message);
         }
+        setIsDeleting(false);
     }
 
     const saveUser = async (userData) => {
         if (isEditing) {
-            try {
                 await axios.put(`https://users-crud.academlo.tech/users/${userData.id}/`, userData);
-                setUsers(users.map(user => (user.id === userData.id ? userData : user)));
+                // update the state of the users list with the updated user
                 setIsEditing(false);
                 setSuccess(true);
-            } catch (error) {
-                setErrors(error.message);
-            }
         } else {
             try {
                 await axios.post('https://users-crud.academlo.tech/users/', userData);
-                setUsers([...users, userData]);
                 setSuccess(true);
+                const newUsers = await axios.get('https://users-crud.academlo.tech/users/');
+                setUsers(newUsers);
             } catch (error) {
                 setErrors(error.message);
             }
         }
-    }
-
-    const cancelEdition = () => {
+    };
+    
+    const handleCancel = () => {
         setIsEditing(false);
         setEditingUser(null);
-    }
-
+    };
+    
     return (
         <div>
             {errors && <ErrorMessage>{errors}</ErrorMessage>}
             {loading && <div>Loading...</div>}
             {success && <SuccessMessage>User was created/edited successfully</SuccessMessage>}
-            {editingUser ? (
-                <UsersForm user={editingUser} isEditing={isEditing} onSave={saveUser} onCancel={cancelEdition}/>
+            {isEditing ? (
+                <UsersForm user={editingUser} onSave={saveUser} onCancel={handleCancel} setUsers={setUsers} />
             ) : (
-                users.length > 0 ?
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Birthdate</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {users.map(user => (
-                                <tr key={user.id}>
-                                    <td>{user.first_name} {user.last_name}</td>
-                                    <td>{user.email}</td>
-                                    <td>{user.birthday}</td>
-                                    <td>
-                                        <button onClick={() => handleEdit(user.id)}>Edit</button>
-                                        <button onClick={() => handleDelete(user.id)}>Delete</button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                    : <div>No users found</div>
+                usersFromProps.length > 0 ? (
+                    <div className="users-list">
+                        {usersFromProps.map((user) => (
+                            <div key={user.id} className="card">
+                                <div className="card-body">
+                                    <h5 className="card-title">{user.first_name} {user.last_name}</h5>
+                                    <p className="card-text">{user.email}</p>
+                                    <p className="card-text">{user.birthday}</p>
+                                    <div className="card-footer">
+                                        <button className="btn btn-primary" onClick={() => handleEdit(user.id)}>Edit</button>
+                                        <button className="btn btn-danger" onClick={() => handleDelete(user.id)}>Delete</button>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div>No users to display</div>
+                )
             )}
         </div>
-    )
-}
+    );
+    };
+
+UsersList.propTypes = {
+    users: PropTypes.array.isRequired,
+    setUsers: PropTypes.func.isRequired,
+};
 
 export default UsersList;
