@@ -83,11 +83,17 @@ const UsersList = ({ users: usersFromProps, setUsers }) => {
         setEditingUser(null);
     };
     
+    const handleNewUser = () => {
+        setIsEditing(false);
+        setEditingUser({});
+    }
+
     return (
         <div>
             {errors && <ErrorMessage>{errors}</ErrorMessage>}
             {loading && <div>Loading...</div>}
             {success && <SuccessMessage>User was created/edited successfully</SuccessMessage>}
+            <button onClick={handleNewUser}>Create User</button>
             {isEditing ? (
                 <UsersForm user={editingUser} onSave={saveUser} onCancel={handleCancel} setUsers={setUsers} />
             ) : (
