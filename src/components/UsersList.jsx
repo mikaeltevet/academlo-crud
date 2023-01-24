@@ -93,7 +93,7 @@ const UsersList = ({ users: usersFromProps, setUsers }) => {
             {errors && <ErrorMessage>{errors}</ErrorMessage>}
             {loading && <div>Loading...</div>}
             {success && <SuccessMessage>User was created/edited successfully</SuccessMessage>}
-            <button onClick={handleNewUser}>Create User</button>
+            <button onClick={handleNewUser}>New User</button>
             {isEditing ? (
                 <UsersForm user={editingUser} onSave={saveUser} onCancel={handleCancel} setUsers={setUsers} />
             ) : (
@@ -118,8 +118,8 @@ const UsersList = ({ users: usersFromProps, setUsers }) => {
                 )
             )}
         </div>
-    );
-    };
+    );    
+};
 
 UsersList.propTypes = {
     users: PropTypes.array.isRequired,
