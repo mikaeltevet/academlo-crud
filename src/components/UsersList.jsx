@@ -84,8 +84,9 @@ const UsersList = ({ users: usersFromProps, setUsers }) => {
     };
     
     const handleNewUser = () => {
-        setIsEditing(false);
-        setEditingUser({});
+        setIsEditing(true);
+        setEditingUser(null);
+        setSuccess(false);
     }
 
     return (
